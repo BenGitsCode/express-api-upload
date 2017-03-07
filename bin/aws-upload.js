@@ -6,12 +6,17 @@ const s3Upload = require('../lib/s3-upload');
 const Upload = require('../app/models/upload');
 const mongoose = require('../app/middleware/mongoose');
 
+const mime = require('mime');
+
 // Upload.create(title, url?)
 
 let file = {
   path: process.argv[2],
   title: process.argv[3]
 };
+
+file.mimetype = mime.lookup(file.path);
+file.originalname = file.path;
 
 s3Upload(file)
   .then((s3Response)=>{

@@ -37,22 +37,14 @@ const create = (req, res, next) => {
   //         upload: upload.toJSON({ virtuals: true, user: req.user }),
   //       }))
   //   .catch(next);
-  console.log("req.file is ", req.file);
 
-  console.log("req.body is ", req.body);
-  let file = {
-    title: req.file.originalname,
-    path: req.file.path
-  };
   //s3 upload takes an object with the file.path and file.title defined
-  s3Upload(file)
+  s3Upload(req.file)
     .then((s3Response)=>{
-      //get the url!
-      let url = s3Response.Location;
       return Upload.create({
-        title: file.title,
-        url: url,
-      })
+        title: req.file.originalname,
+        url: s3Response.Location,
+      });
     })
     .then((upload) => res.json({ upload }))
     .catch((error) => next(error));
